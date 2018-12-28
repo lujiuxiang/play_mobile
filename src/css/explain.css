@@ -1,0 +1,248 @@
+@charset "utf-8";
+
+/* 顶部回退框 */
+
+.title {
+    position: fixed;
+    top: 0;
+    z-index: 99999;
+    width: 100%;
+    height: 100px;
+    text-align: center;
+    background: url("../../static/images/index/titleSearch.png") no-repeat center/cover;
+}
+
+.title span {
+    text-align: center;
+    font-size: 36px;
+    color: #fff;
+    line-height: 100px;
+    text-align: center;
+}
+
+.title i {
+    position: absolute;
+    left: 30px;
+    line-height: 100px;
+    font-size: 40px;
+    color: #fff;
+    z-index: 99;
+}
+
+.title>.icon-shuoming {
+    left: 92%;
+}
+
+.title span i {
+    display: inline-block;
+    position: relative;
+    top: -2px;
+    left: 0;
+    font-size: 26px;
+}
+
+
+/* 顶部回退框 */
+
+
+/* 分页 */
+
+.page {
+    padding-top: 30px;
+    text-align: center;
+    background-color: #eee;
+}
+
+.page p {
+    text-align: center;
+}
+
+.page i {
+    font-style: normal;
+}
+
+.page p>span {
+    display: inline-block;
+    margin: 20px 0;
+    width: 40px;
+    height: 45px;
+    line-height: 45px;
+    border: 1px solid #303030;
+    /*no*/
+}
+
+
+/* 说明 */
+
+.mint-popup-right {
+    margin-right: 10%;
+    width: 80%;
+    height: 75%;
+    background-color: #fff;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+.explainWrap {
+    height: 100%;
+}
+
+.explainWrap h6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8%;
+    font-size: 30px;
+    border-radius: 20px 20px 0 0;
+    background-color: #eee;
+}
+
+.explainWrap>div {
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    height: 75%;
+    overflow-y: scroll;
+}
+
+.explainWrap ol {
+    margin-left: 30px;
+}
+
+.explainWrap ol li {
+    list-style: decimal;
+    margin: 15px 0;
+}
+
+.explainWrap .btn {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 10%;
+    border-top: 2px solid #aaa;
+}
+
+.explainWrap button {
+    width: 80%;
+    height: 70px;
+    border-radius: 20px;
+    color: #fff;
+    background-color: #ba9e6d;
+}
+
+
+/* 快选弹窗 */
+
+.chooseShow {
+    top: 210px !important;
+    left: 60% !important;
+    border-radius: 20px;
+    width: 70%;
+}
+
+.chooseShow::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: -15px;
+    right: 40px;
+    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    background-color: #fff;
+    transform: rotate(-45deg);
+}
+
+.chooseShow ul {
+    padding: 10px 20px;
+}
+
+.chooseShow ul li {
+    padding: 20px 0;
+    border-bottom: 2px solid #ddd;
+    text-indent: 10px;
+}
+
+
+/* 搜索类型弹窗 开始 */
+
+.search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    width: 100%;
+    border-top: 2px solid #eee;
+    border-bottom: 2px solid #ddd;
+}
+
+.search p {
+    margin: 0 10px;
+    width: 45%;
+    height: 60px;
+    line-height: 60px;
+}
+
+.search .sea_left {
+    border: 1px solid #ddd;
+    /*no*/
+    border-radius: 10px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.search p span {
+    float: left;
+}
+
+.search p i {
+    float: right;
+    font-size: 36px;
+}
+
+.search p button {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background-color: #000;
+    color: #fff;
+}
+
+
+/* 搜索记录的弹窗 */
+
+.searchPop {
+    top: 310px !important;
+    left: 25% !important;
+    padding: 20px 0;
+    width: 38%;
+    max-height: 40%;
+    border-radius: 10px;
+}
+
+.searchPop ul {
+    position: relative;
+    z-index: 2;
+    padding: 0 20px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: scroll;
+}
+
+.searchPop::before {
+    content: "";
+    position: absolute;
+    top: -15px;
+    right: 50%;
+    margin-right: -25px;
+    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    background-color: #fff;
+    transform: rotate(-45deg);
+}
+
+.searchPop ul li {
+    padding: 26px 0;
+    border-bottom: 2px solid #ddd;
+    text-align: center;
+}
