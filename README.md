@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# weinisiweinisi
+# 娱乐平台 PC端
 
 > A Vue.js project
 
