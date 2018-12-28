@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# 娱乐平台 PC端
+# 娱乐平台 移动端项目
 
 > A Vue.js project
 
