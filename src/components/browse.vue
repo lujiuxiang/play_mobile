@@ -86,6 +86,7 @@ export default {
             let r = confirm("确定要删除此记录吗？");
             if (r == true) {
                 //确认的回调
+                Indicator.open("删除中..")
                 that.$post("index/method/recentlydel",{
                     userid: user,
                     gameid: gameid
@@ -93,6 +94,7 @@ export default {
                     // 如果res为-1 则表示账号在别处登录 -2则表示登陆超时
                     if (res == -1 || res == -2) {
                         that.common.isOnline(that, res);
+                        Indicator.close()
                         return;
                     }
                     if (res == 1) {
@@ -104,6 +106,7 @@ export default {
                     } else {
                         Toast("删除记录失败！");
                     }
+                    Indicator.close()
                 }).catch(err=>{
                     console.log(err);
                 })
@@ -229,6 +232,7 @@ export default {
     border-bottom: 2px solid #ccc;
 }
 .content .recode li p {
+    margin-right: 10px;
     width: 15%;
     text-align: center;
 }
@@ -238,11 +242,14 @@ export default {
     border-radius: 50%;
 }
 .content .recode li div {
-    width: 38%;
+    flex: 3;
+}
+.content .recode li div:nth-child(3){
+    flex: 1;
 }
 .content .recode li h6 {
     margin-bottom: 10px;
-    font-size: 32px;
+    font-size: 28px;
     color: #000;
     font-weight: normal;
 }
@@ -252,6 +259,7 @@ export default {
 }
 
 .content .recode li .right {
+    margin: 0;
     text-align: right;
     font-size: 26px;
 }

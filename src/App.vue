@@ -47,6 +47,7 @@ export default {
         // 首页弹窗关闭
         popupShowFalse() {
             this.popupShow = false;
+            window.sessionStorage.setItem("popupShow","1")
         },
 
         ...mapActions([

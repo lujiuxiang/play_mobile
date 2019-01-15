@@ -254,10 +254,11 @@ div>>>.mint-swipe-items-wrap {
 
 /* 游戏导航下的内容 开始 */
 
-.games .contentWrap {
+.contentWrap>div {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    width: 100%;
     padding: 5px;
     box-sizing: border-box;
 }

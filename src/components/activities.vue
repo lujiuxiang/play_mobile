@@ -22,7 +22,7 @@
                 <mt-tab-container class="page-tabbar-tab-container" v-model="active">
                     <mt-tab-container-item class="contentWrap" v-for="(item,index) in navBar" :id="item.id" :key="index">
                         <!-- 导航的优惠详情 -->
-                        <ul class="activity-bot" ref="topListContent" :key="index" v-if="navBar.length>0">
+                        <ul class="activity-bot" ref="topListContent" :key="index">
                             <!-- 详情列表 -->
                             <li v-for="(newitem,newindexBot) in item.sub" :key="newindexBot">
                                 <div ref="activeList" class="hd_wrap">
@@ -102,6 +102,12 @@ export default {
         let that = this;
         this.common.noData(that);
     },
+    activated() {
+        if (!this.navBar) {
+            Indicator.open("加载中...")
+            this.handle_getActivity({url: "index/index/active", that: this})
+        };
+    },
     methods: {
         //返回上一层
         goBack() {
@@ -111,7 +117,6 @@ export default {
             this.onoff = !this.onoff;
             let activeList = this.$refs.activeList;
             let activityList = this.$refs.activityList;
-
             activeList.forEach((item, index) => {
                 item.onclick = function() {
                     if (this.children[2].className.indexOf("active") > -1) {
@@ -139,6 +144,7 @@ export default {
                 alert("请登录之后进行申请")
                 return
             }
+            Indicator.open("提交中")
             // axios 请求 -- 发送申请
             that.$post("person/agent/addActive",{
                 user: user,
@@ -147,8 +153,10 @@ export default {
                 // 如果res为-1 则表示账号在别处登录 -2则表示登陆超时
                 if (res == -1 || res == -2) {
                     that.common.isOnline(that, res);
+                    Indicator.close();
                     return;
                 }
+                Indicator.close();
                 if(res == 1){
                     alert("申请成功，请留意会员消息！")
                 }else if(res == 2){
@@ -160,6 +168,7 @@ export default {
                 }
             }).catch(err=>{
                 console.log(err);
+                Indicator.close();
                 alert("发送失败！")
             })
         },
@@ -167,15 +176,19 @@ export default {
             "handle_getActivity"
         ])
     },
-    mounted() {
-        if (!this.navBar) Indicator.open("加载中...");
-        this.handle_getActivity({url: "index/index/active", that: this})
-    },
-    updated() {
-        if (this.navBar) {
-            this.toggle();
+    watch: {
+        navBar(val,oldval){
+            if(val && val != oldval){
+                Indicator.close();
+                this.$nextTick(()=>{
+                    this.toggle();
+                })
+            }
         }
+    },
+    beforeRouteLeave (to, from, next) {
         Indicator.close();
+        next()
     }
 };
 </script>

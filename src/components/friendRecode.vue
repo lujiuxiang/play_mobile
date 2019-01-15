@@ -59,21 +59,16 @@
             <div class="get">
                 <div class="topRecode">
                     <p>
-                        <span>昨日获得推荐红利：</span>
-                        <i class="orange">0.00</i>
+                        <span>今日获得推荐红利：</span>
+                        <i class="orange">{{myGet.today}}</i>
                     </p>
                     <p>
                         <span>您已推荐好友</span><br>
-                        <i class="blue">{{count}}人</i>
+                        <i class="blue">{{myGet.count}}人</i>
                     </p>
                     <p>
                         <span>您已获得</span>
-                        <i class="green">0.00</i>
-                        <span>推荐单次奖励</span>
-                    </p>
-                    <p>
-                        <span>您已获得</span>
-                        <i class="orange">0.00</i>
+                        <i class="orange">{{myGet.all}}</i>
                         <span>推荐红利</span>
                     </p>
 
@@ -81,16 +76,15 @@
             </div>
 
             <!-- 内容数据 -->
-            <div>
+            <div class="tableWrap">
                 <table class="tableList" v-swipeup="{fn:vuetouch,name:'上滑'}" v-swipedown="{fn:vuetouch,name:'下滑'}">
                     <thead>
-                        <th width="25%">好友账号</th>
-                        <th width="25%">注册时间</th>
-                        <th width="25%">状态</th>
-                        <th width="25%">推荐单次奖励</th>
+                        <th>好友账号</th>
+                        <th>注册时间</th>
+                        <th>状态</th>
+                        <th>推荐单次奖励</th>
                     </thead>
                     <tbody>
-
                         <tr v-if="friendRecode.length <= 0" class="recode no">
                             <td colspan="4" style="height:80px;">
                                 <p>
@@ -99,18 +93,24 @@
                                 暂时没有数据
                             </td>
                         </tr>
+                        <tr v-else v-for="(item,index) in friendRecode" :key="index">
+                            <td>{{item.user}}</td>
+                            <td>{{item.ctime}}</td>
+                            <td>{{item.type}}</td>
+                            <td>{{item.price}}</td>
+                        </tr>
                     </tbody>
                 </table>
 
                 <!-- 切换页 -->
                 <div class="listButton">
-                    <mt-button type="default" @click="PageBet(1,page.endpage,page.name)">首页</mt-button>
-                    <mt-button type="default" @click="PageBet(page.page - 1 ,page.endpage,page.name)">上一页</mt-button>
+                    <mt-button type="default" @click="PageBet(1,page.endpage)">首页</mt-button>
+                    <mt-button type="default" @click="PageBet(page.page - 1 ,page.endpage)">上一页</mt-button>
                     <span>当前页:
                         <i>{{page.page}}</i>
                     </span>
-                    <mt-button type="default" @click="PageBet(parseInt(page.page) + 1,page.endpage,page.name)">下一页</mt-button>
-                    <mt-button type="default" @click="PageBet(page.endpage,page.endpage,page.name)">尾页</mt-button>
+                    <mt-button type="default" @click="PageBet(parseInt(page.page) + 1,page.endpage)">下一页</mt-button>
+                    <mt-button type="default" @click="PageBet(page.endpage,page.endpage)">尾页</mt-button>
                     <span>共
                         <i>{{page.endpage}}</i>页</span>
                     <span>共
@@ -126,8 +126,7 @@
 </template>
 
 <script>
-import { MessageBox } from "mint-ui";
-import { Indicator } from "mint-ui";
+import { MessageBox,Indicator } from "mint-ui";
 import commonfooter from "./../commonViews/commonfooter";
 import "../iconfont/iconfont.css"; //icon
 import "../css/explain.css"; //说明的 css
@@ -145,11 +144,17 @@ export default {
             endTime: "",
             minTime: "",
             // 推荐人数
-            count: "",
-
+            myGet: {
+                count: "",
+                today: "",
+                all: ""
+            },
             friendRecode: [],
-
-            page: {}
+            page: {
+                page: 1,
+                endpage: 1,
+                count: 0
+            }
         };
     },
     components: {
@@ -188,73 +193,40 @@ export default {
             switch (id) {
                 case "day1":
                     // 开始时间 和 结束时间 都是今天
-                    start.value = end.value =
-                        timeAdd0(nowYear) +
-                        "-" +
-                        timeAdd0(nowMonth) +
-                        "-" +
-                        timeAdd0(nowDay);
+                    start.value = end.value = timeAdd0(nowYear) + "-" + timeAdd0(nowMonth) + "-" + timeAdd0(nowDay);
                     break;
                 case "day2":
                     // 开始时间 和 结束时间 都是昨天
-                    start.value = end.value =
-                        timeAdd0(nowYear) +
-                        "-" +
-                        timeAdd0(nowMonth) +
-                        "-" +
-                        timeAdd0(nowDay - 1);
+                    start.value = end.value = timeAdd0(nowYear) + "-" + timeAdd0(nowMonth) + "-" + timeAdd0(nowDay - 1);
                     break;
                 case "day3":
                     let week = date.getDay(); //获取时间的星期数
                     let minus = week ? week - 1 : 6;
                     date.setDate(date.getDate() - minus); //获取minus天前的日期
                     let y = date.getFullYear();
-                    let m =
-                        date.getMonth() + 1 < 10
-                            ? "0" + (date.getMonth() + 1)
-                            : date.getMonth() + 1; //获取月份
-                    let d =
-                        date.getDate() < 10
-                            ? "0" + date.getDate()
-                            : date.getDate();
+                    let m = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1; //获取月份
+                    let d = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
                     // 开始时间
                     start.value = y + "-" + m + "-" + d;
                     // 结束时间
-                    end.value =
-                        timeAdd0(nowYear) +
-                        "-" +
-                        timeAdd0(nowMonth) +
-                        "-" +
-                        timeAdd0(nowDay);
+                    end.value = timeAdd0(nowYear) + "-" + timeAdd0(nowMonth) + "-" + timeAdd0(nowDay);
                     break;
                 case "day4":
                     var targetday_milliseconds =
                         date.getTime() + 1000 * 60 * 60 * 24 * -6;
                     date.setTime(targetday_milliseconds); //注意，这行是关键代码
                     y = date.getFullYear();
-                    m =
-                        date.getMonth() + 1 < 10
-                            ? "0" + (date.getMonth() + 1)
-                            : date.getMonth() + 1; //获取月份
-                    d =
-                        date.getDate() < 10
-                            ? "0" + date.getDate()
-                            : date.getDate();
+                    m = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1; //获取月份
+                    d = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
                     // 开始时间
                     start.value = y + "-" + m + "-" + d;
                     // 结束时间
-                    end.value =
-                        timeAdd0(nowYear) +
-                        "-" +
-                        timeAdd0(nowMonth) +
-                        "-" +
-                        timeAdd0(nowDay);
+                    end.value = timeAdd0(nowYear) + "-" + timeAdd0(nowMonth) + "-" + timeAdd0(nowDay);
                     break;
-
                 default:
                     break;
             }
-            this.inquire(this.page.name);
+            this.inquire();
             this.chooseShow = false;
         },
 
@@ -275,11 +247,10 @@ export default {
             }
         },
         // axios 查询请求
-        searchDataAxios(user,name,startTime,endTime,page){
+        searchDataAxios(user,startTime,endTime,page){
             let that = this
-            that.$post("person/index/pageRemarkSelect",{
+            that.$post("person/index/tuiRemark",{
                 user: user,
-                name: name,
                 starttime: startTime,
                 endtime: endTime,
                 page: page
@@ -289,43 +260,11 @@ export default {
                     that.common.isOnline(that, res);
                     return;
                 }
-                switch (name) {
-                    case "Ag":
-                        that.allInfo[0] = res.info;
-                        that.page = res.page;
-                        break;
-                    case "Mg":
-                        that.allInfo[1] = res.info;
-                        that.page = res.page;
-                        break;
-                    case "Gd":
-                        that.allInfo[2] = res.info;
-                        that.page = res.page;
-                        break;
-                    case "Cq9":
-                        that.allInfo[3] = res.info;
-                        that.page = res.page;
-                        break;
-                    case "2":
-                        that.allInfo[4] = res.info;
-                        that.page = res.page;
-                        break;
-                    case "101":
-                        that.allInfo[5] = res.info;
-                        that.page = res.page;
-                        break;
-                    case "102":
-                        that.allInfo[6] = res.info;
-                        that.page = res.page;
-                        break;
-                    case "201":
-                        that.allInfo[7] = res.info;
-                        that.page = res.page;
-                        break;
-
-                    default:
-                        break;
-                }
+                that.myGet.count = res.tj.count; //今日红利
+                that.myGet.today = res.tj.today; //推荐人数
+                that.myGet.all = res.tj.all; //总红利
+                that.friendRecode = res.tj.list
+                that.page = res.page
                 Indicator.close();
             }).catch(err=>{
                 console.log(err);
@@ -333,7 +272,7 @@ export default {
             })
         },
         // 按时间查询 函数
-        inquire(name) {
+        inquire() {
             let that = this;
             let user = window.sessionStorage.getItem("login_user");
             let startTime = this.$refs.start.value;
@@ -346,55 +285,39 @@ export default {
             }
             Indicator.open("加载中...");
             // axios 请求
-            that.searchDataAxios(user,name,startTime,endTime)
+            that.searchDataAxios(user,startTime,endTime)
         },
 
         //切换页
-        PageBet(page, endpage, name, starttime, endtime) {
+        PageBet(page, endpage, starttime, endtime) {
             let user = window.sessionStorage.getItem("login_user");
             let that = this;
             if (page <= 0) return;
             if (page > endpage) return;
             Indicator.open("加载中...");
             // axios 请求
-            that.searchDataAxios(user,name,startTime,endTime,page)
+            that.searchDataAxios(user,starttime,endtime,page)
         },
 
         // 上滑 下滑切换页
         vuetouch: function(s, e) {
             let page = this.page.page,
-                endpage = this.page.endpage,
-                pagename = this.page.name;
+                endpage = this.page.endpage;
             if (s.name == "上滑") {
                 page = parseInt(page) + 1;
-                this.PageBet(page, endpage, pagename);
+                this.PageBet(page, endpage);
             } else if (s.name == "下滑") {
                 page = page - 1;
-                this.PageBet(page, endpage, pagename);
+                this.PageBet(page, endpage);
             }
         }
     },
     mounted() {
+        
+    },
+    activated() {
         let that = this;
         let user = window.sessionStorage.getItem("login_user");
-        if (!user) return;
-        Indicator.open("加载中...");
-        // axios 请求
-        that.$post("person",{
-            user: user
-        }).then(res=>{
-            // 如果res为-1 则表示账号在别处登录 -2则表示登陆超时
-            if (res == -1 || res == -2) {
-                that.common.isOnline(that, res);
-                return;
-            }
-            that.count = res.tj.count; //推荐人数
-            Indicator.close();
-        }).catch(err=>{
-            console.log(err);
-            Indicator.close();
-        })
-
         // 时间查询
         let starttime = this.$refs.start;
         let endtime = this.$refs.end;
@@ -403,40 +326,30 @@ export default {
         //得到当前年份
         let year = date_now.getFullYear();
         //得到当前月份
-        //注：
         //  1：js中获取Date中的month时，会比当前月份少一个月，所以这里需要先加一
         //  2: 判断当前月份是否小于10，如果小于，那么就在月份的前面加一个 '0' ， 如果大于，就显示当前月份
-        let month =
-            date_now.getMonth() + 1 < 10
-                ? "0" + (date_now.getMonth() + 1)
-                : date_now.getMonth() + 1;
+        let month = date_now.getMonth() + 1 < 10 ? "0" + (date_now.getMonth() + 1) : date_now.getMonth() + 1;
         //得到当前日子（多少号）
-        let date =
-            date_now.getDate() < 10
-                ? "0" + date_now.getDate()
-                : date_now.getDate();
+        let date = date_now.getDate() < 10 ? "0" + date_now.getDate() : date_now.getDate();
+        // 最小查询时间为7天前
+        let dateAll1 = date_now.getTime() - 6 * 24 * 3600 * 1000; //获取当前日期到七天前的毫秒数
+        let dateAll2 = new Date(dateAll1);
+        let date1 = dateAll2.getFullYear();
+        let date2 = dateAll2.getMonth() + 1 < 10 ? "0" + (dateAll2.getMonth() + 1) : dateAll2.getMonth() + 1;
+        let date3 = dateAll2.getDate() < 10 ? "0" + dateAll2.getDate() : dateAll2.getDate();
         //设置input标签的默认时间为当前时间
         this.startTime = year + "-" + month + "-" + date;
         this.endTime = year + "-" + month + "-" + date;
         starttime.value = this.startTime;
         endtime.value = this.endTime;
-        // 最小查询时间为7天前
-        let dateAll1 = date_now.getTime() - 6 * 24 * 3600 * 1000; //获取当前日期到七天前的毫秒数
-        let dateAll2 = new Date(dateAll1);
-        let date1 = dateAll2.getFullYear();
-        let date2 =
-            dateAll2.getMonth() + 1 < 10
-                ? "0" + (dateAll2.getMonth() + 1)
-                : dateAll2.getMonth() + 1;
-        let date3 =
-            dateAll2.getDate() < 10
-                ? "0" + dateAll2.getDate()
-                : dateAll2.getDate();
         this.minTime = date1 + "-" + date2 + "-" + date3;
-    },
-    activated() {
-        let that = this;
         this.common.noData(that);
+        if (!user) return;
+        Indicator.open("加载中...");
+
+        // axios 请求
+        that.searchDataAxios(user)
+        
         // 判断当前页面弹窗是否是弹出状态 如果是 阻止父级页面滚动 不是则开启浏览器默认滑动
         if(this.popupActive == true || this.chooseShow == true){
             this.common.afterOpen();
@@ -550,7 +463,7 @@ export default {
     font-size: 24px;
 }
 
-.content > div:nth-of-type(3) {
+.content > div:nth-of-type(3),.content > div:nth-of-type(4) {
     padding: 0 20px;
 }
 table {

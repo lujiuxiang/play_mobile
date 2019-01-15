@@ -191,7 +191,7 @@ export default {
                 }
                 that.$post("index/user/isuser",{
                     user: val0
-                }).that(res=>{
+                }).then(res=>{
                     if (res == 1) {
                         alert(
                             "介绍人不存在，请重新输入！（无介绍人也可注册！）"
@@ -368,6 +368,7 @@ export default {
                 if (val10 == "" || val10 != nowyzm) {
                     that.state10 = "error";
                     that.Isval10 = false;
+                    that.yzmShow()
                     return false;
                 } else {
                     that.state10 = "success";
@@ -431,17 +432,17 @@ export default {
                     email: email,
                     wx: wx
                 }).then(res=>{
-                    if (data == 1) {
+                    if (res == 1) {
                         alert("恭喜您注册成功！");
                         // axios 登录
                         that.$post("index/user/userLogin",{
                             user: user,
                             pass: pass
-                        }).then(res=>{
-                            if (res) {
-                                if (res != 2) {
-                                    window.sessionStorage.setItem("login_user",res.sessionid); //存储登录的用户名的sessionid
-                                    window.sessionStorage.setItem("username",res.username); //存储登录的用户名
+                        }).then(res_second=>{
+                            if (res_second) {
+                                if (res_second != 2) {
+                                    window.sessionStorage.setItem("login_user",res_second.sessionid); //存储登录的用户名的sessionid
+                                    window.sessionStorage.setItem("username",res_second.username); //存储登录的用户名
                                     window.sessionStorage.removeItem("usertype"); //清除试玩账号的usertype
                                     that.$router.push({ path: "/" });
                                 } else {
@@ -457,15 +458,16 @@ export default {
                         }).catch(err=>{
                             console.log(err);
                         })
-                    }else if(data == -1){
+                    }else if(res == -1){
                         alert("当前ip今日注册已达到上限！")
-                    } else if (data == 2) {
+                    } else if (res == 2) {
                         alert("用户名已存在，请重新输入！");
                     }
                 }).catch(err=>{
                     console.log(err);
                 })
             } else {
+                that.yzmShow()
                 window.alert("请检查是否有错误的选项！");
             }
         },

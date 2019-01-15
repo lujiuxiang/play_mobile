@@ -128,8 +128,6 @@ export default {
                     that.bank1 = true;
                     that.state1 = "success";
                 }
-                console.log(that.bank1);
-                
             };
             
         },

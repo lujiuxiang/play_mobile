@@ -15,92 +15,95 @@
                 </div>
                 <!-- 每个导航的详细列表 -->
                 <div ref="paybox" class="payBox" v-for="(item,index) in payList" :key="index">
-                    <!-- 微信充值和支付宝充值 -->
-                    <div class="clearfix" v-if="active && index === 0 || index === 1" v-for="(newitem,newindex) in item.sub" :key="newindex" @click="gopay($event,newindex,newitem.src,newitem.class,newitem.tips,newitem.toptext,newitem.bottext)">
-                        <p>
-                            <img :src="newitem.src" alt="">
-                        </p>
-                        <div>
-                            <i :class="newitem.class">{{newitem.tips}}</i>
-                            <span>{{newitem.toptext}}</span>
-                            <p v-html="newitem.bottext"></p>
-                        </div>
-                        <i class="iconfont icon-youjiantou"></i>
-                    </div>
-                    <!-- 银行卡充值 -->
-                    <div class="clearfix" style="display: block;" v-else-if="active && index === 2">
-                        <div class="bankcard_nav clearfix">
-                            <div class="bankcard_title">选择汇款卡号</div>
+                    <div v-for="(newitem,newindex) in item.sub" :key="newindex" >
+                        <!-- 微信充值和支付宝充值 -->
+                        <div class="clearfix" v-if="active && index === 0 || index === 1" @click="gopay($event,newindex,newitem.src,newitem.class,newitem.tips,newitem.toptext,newitem.bottext)">
+                            <p>
+                                <img :src="newitem.src" alt="">
+                            </p>
                             <div>
-                                <!-- @click事件的index+1是为了和下面的列表的id对应  id千万不要修改 -->
-                                <mt-button class='navBar' 
-                                            :class="{bank_title_red: bank_card_nav.substr(bank_card_nav.length-1,1) == newindex + 1}" 
-                                            ref="navBar" v-for="(newitem,newindex) in item.sub[0]" 
-                                            @click.native.prevent="bank_card_nav = 'tab-container' +( newindex + 1) + ''; bank_card_nav_index = newindex" 
+                                <i :class="newitem.class">{{newitem.tips}}</i>
+                                <span>{{newitem.toptext}}</span>
+                                <p v-html="newitem.bottext"></p>
+                            </div>
+                            <i class="iconfont icon-youjiantou"></i>
+                        </div>
+                        <!-- 银行卡充值 -->
+                        <div class="clearfix" style="display: block;" v-else-if="active && index === 2">
+                            <div class="bankcard_nav clearfix">
+                                <div class="bankcard_title">选择汇款卡号</div>
+                                <div>
+                                    <!-- @click事件的index+1是为了和下面的列表的id对应  id千万不要修改 -->
+                                    <mt-button class='navBar' 
+                                                :class="{bank_title_red: bank_card_nav.substr(bank_card_nav.length-1,1) == newindex + 1}" 
+                                                ref="navBar" v-for="(newitem,newindex) in item.sub[0]" 
+                                                @click.native.prevent="bank_card_nav = 'tab-container' +( newindex + 1) + ''; bank_card_nav_index = newindex" 
+                                                :key="newindex">
+                                        <span>{{newitem.k2}}-{{newitem.k1}}</span>
+                                    </mt-button>
+                                </div>
+                            </div>
+
+                            <!-- 循环银行卡数组 -->
+                            <div class="page-tab-container">
+                                <mt-tab-container class="page-tabbar-tab-container" v-model="bank_card_nav">
+                                    <mt-tab-container-item 
+                                            class="bankcard_content" 
+                                            v-for="(newitem,newindex) in item.sub[0]" 
+                                            :id=' "tab-container"+(newindex + 1) ' 
                                             :key="newindex">
-                                    <span>{{newitem.k2}}-{{newitem.k1}}</span>
-                                </mt-button>
-                            </div>
-                        </div>
-
-                        <!-- 循环银行卡数组 -->
-                        <div class="page-tab-container">
-                            <mt-tab-container class="page-tabbar-tab-container" v-model="bank_card_nav">
-                                <mt-tab-container-item 
-                                        class="bankcard_content" 
-                                        v-for="(newitem,newindex) in item.sub[0]" 
-                                        :id=' "tab-container"+(newindex + 1) ' 
-                                        :key="newindex"
-                                        v-if="newindex == bank_card_nav_index">
-                                    <div>
-                                        <span>持卡人</span>
-                                        <i id="bankcard_user" ref="bankcard_username">{{newitem.k1}}</i>
-                                        <em class="copy_name" @click="copyMSG('.copy_name')" data-clipboard-action="copy" data-clipboard-target="#bankcard_user">复制</em>
-                                    </div>
-                                    <div>
-                                        <span>银行卡号</span>
-                                        <i id="bankcard_card" ref="bankcard_card">{{newitem.k4}}</i>
-                                        <em class="copy_idcard" @click="copyMSG('.copy_idcard')" data-clipboard-action="copy" data-clipboard-target="#bankcard_card">复制</em>
-                                    </div>
-                                    <div>
-                                        <span>开户行</span>
-                                        <i id="bankcard_addr" ref="bankcard_addr">{{newitem.k3}}</i>
-                                        <em class="copy_addr" @click="copyMSG('.copy_addr')" data-clipboard-action="copy" data-clipboard-target="#bankcard_addr">复制</em>
-                                    </div>
-                                </mt-tab-container-item>
-                            </mt-tab-container>
-                        </div>
-
-                        <div class="bankcard_content">
-                            <!-- 汇款方式 -->
-                            <div>
-                                <span>汇款方式</span>
-                                <i ref="remittance_methods_text" @click.prevent.stop="remiteance_show">{{remittance_methods_text}}</i>
-                                <mt-popup v-model="remittance_methods" position="bottom">
-                                    <mt-picker ref="picker" :slots="slots" showToolbar value-key="text">
-                                         <div class="picker-toolbar-title">
-                                            <div class="usi-btn-cancel" @click="remittance_methods = !remittance_methods">取消</div>
-                                            <div class="usi-btn-sure" @click="handleConfirm(newindex)">确定</div>
+                                        <div v-if="newindex == bank_card_nav_index" style="border:none;">
+                                            <div>
+                                                <span>持卡人</span>
+                                                <i id="bankcard_user" ref="bankcard_username">{{newitem.k1}}</i>
+                                                <em class="copy_name" @click="copyMSG('.copy_name')" data-clipboard-action="copy" data-clipboard-target="#bankcard_user">复制</em>
+                                            </div>
+                                            <div>
+                                                <span>银行卡号</span>
+                                                <i id="bankcard_card" ref="bankcard_card">{{newitem.k4}}</i>
+                                                <em class="copy_idcard" @click="copyMSG('.copy_idcard')" data-clipboard-action="copy" data-clipboard-target="#bankcard_card">复制</em>
+                                            </div>
+                                            <div>
+                                                <span>开户行</span>
+                                                <i id="bankcard_addr" ref="bankcard_addr">{{newitem.k3}}</i>
+                                                <em class="copy_addr" @click="copyMSG('.copy_addr')" data-clipboard-action="copy" data-clipboard-target="#bankcard_addr">复制</em>
+                                            </div>
                                         </div>
-                                    </mt-picker>
-                                </mt-popup>
+                                    </mt-tab-container-item>
+                                </mt-tab-container>
                             </div>
-                            <!-- 选择汇款方式时 需要填写的选项 -->
-                            <div v-if="remittance_methods_id === 'ATM_money' || remittance_methods_id === 'ATM_bankcard'">
-                                <span>汇款地点</span>
-                                <input ref="my_addr" type="text" placeholder="请输入汇款地点">
+
+                            <div class="bankcard_content">
+                                <!-- 汇款方式 -->
+                                <div>
+                                    <span>汇款方式</span>
+                                    <i ref="remittance_methods_text" @click.prevent.stop="remiteance_show">{{remittance_methods_text}}</i>
+                                    <mt-popup v-model="remittance_methods" position="bottom">
+                                        <mt-picker ref="picker" :slots="slots" showToolbar value-key="text">
+                                             <div class="picker-toolbar-title">
+                                                <div class="usi-btn-cancel" @click="remittance_methods = !remittance_methods">取消</div>
+                                                <div class="usi-btn-sure" @click="handleConfirm(newindex)">确定</div>
+                                            </div>
+                                        </mt-picker>
+                                    </mt-popup>
+                                </div>
+                                <!-- 选择汇款方式时 需要填写的选项 -->
+                                <div v-if="remittance_methods_id === 'ATM_money' || remittance_methods_id === 'ATM_bankcard'">
+                                    <span>汇款地点</span>
+                                    <input ref="my_addr" type="text" placeholder="请输入汇款地点">
+                                </div>
+                                <div v-else-if="remittance_methods_id === 'E_bank'">
+                                    <span>汇款人姓名</span>
+                                    <input ref="my_name" type="text" placeholder="请输入汇款人姓名">
+                                    <strong class="bank_tips">温馨提示：当转账人姓名与上方姓名不符时，请填写正确的转账人姓名以便快速到账。</strong>
+                                </div>
+                                <div v-else-if="remittance_methods_id === 'other'">
+                                    <span></span>
+                                    <input ref="my_otoers_methods" type="text" placeholder="请输入其他汇款方式">
+                                </div>
+                                <div><span>金额</span><input type="text" ref="bankcard_money" placeholder="最少10元"></div>
+                                <mt-button @click="bangCard_submit">提交</mt-button>
                             </div>
-                            <div v-else-if="remittance_methods_id === 'E_bank'">
-                                <span>汇款人姓名</span>
-                                <input ref="my_name" type="text" placeholder="请输入汇款人姓名">
-                                <strong class="bank_tips">温馨提示：当转账人姓名与上方姓名不符时，请填写正确的转账人姓名以便快速到账。</strong>
-                            </div>
-                            <div v-else-if="remittance_methods_id === 'other'">
-                                <span></span>
-                                <input ref="my_otoers_methods" type="text" placeholder="请输入其他汇款方式">
-                            </div>
-                            <div><span>金额</span><input type="text" ref="bankcard_money" placeholder="最少10元"></div>
-                            <mt-button @click="bangCard_submit">提交</mt-button>
                         </div>
                     </div>
                 </div>
@@ -719,7 +722,7 @@ export default {
                     that.changeList();
                 })
             }).catch(err=>{
-                console.log(data);
+                console.log(err);
             })
         } else {
             MessageBox.confirm("请登录之后进行此操作！",'提示',{
@@ -872,7 +875,7 @@ div >>> .mint-button {
     display: none;
     background-color: #fff;
 }
-.payBox > div {
+.payBox > div > div {
     display: flex;
     align-items: center;
     padding: 20px 30px;
@@ -887,10 +890,10 @@ div >>> .mint-button {
     overflow: hidden;
 }
 .payBox img {
-    width: 100%;
-    height: 100%;
+    width: 80px;
+    height: 80px;
 }
-.payBox > div > div {
+.payBox > div > div > div {
     float: left;
     margin-left: 10px;
 }
@@ -901,14 +904,15 @@ div >>> .mint-button {
     font-size: 24px;
     line-height: 1;
 }
-.payBox > div p {
+.payBox > div > div p {
     margin-top: 10px;
     text-align: left;
 }
-.payBox > div > i {
+.payBox > div > div i {
     flex: 1;
+    padding: 5px 10px;
     text-align: right;
-    line-height: 80px;
+    line-height: none;
 }
 div .danger {
     width: 90%;
@@ -995,6 +999,7 @@ div .danger {
     padding: 20px 0 !important;
     background-color: #fff;
     text-indent: 10px;
+    text-align: right;
     outline: none;
     border: none;
 }

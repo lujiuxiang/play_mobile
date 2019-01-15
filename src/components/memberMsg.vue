@@ -40,8 +40,9 @@
                     <router-link :to="{name:'memberMsgInformation',params:{item:item}}"></router-link>
                 </mt-cell-swipe>
             </div>
-
-            <p class="tips">tips:消息左滑可删除消息~</p>
+            <!-- 有消息时显示删除消息 无消息时显示暂无消息 -->
+            <div class="noMsg" v-if="newMsg.length <= 0 && memberMsg.length <= 0">暂无消息</div>
+            <p class="tips" v-else>tips:消息左滑可删除消息~</p>
 
         </div>
         <!-- content 结束 -->
@@ -93,12 +94,11 @@ export default {
                 id: item.id,
                 typed: 2
             }).then(res=>{
-                // 如果data为-1 则表示账号在别处登录 -2则表示登陆超时
+                // 如果res为-1 则表示账号在别处登录 -2则表示登陆超时
                 if (res == -1 || res == -2) {
                     that.common.isOnline(that, res);
                     return;
                 }
-                console.log(res);
                 Toast("删除成功")
             }).catch(err=>{
                 console.log(err);
@@ -144,7 +144,7 @@ export default {
             that.memberMsg = res.history.info; //系统消息 已读消息
             Indicator.close();
         }).catch(err=>{
-            console.log(data);
+            console.log(err);
             Indicator.close();
         })
     },
@@ -267,5 +267,10 @@ export default {
     font-size: 24px;
     text-align: center;
     color: red;
+}
+.noMsg{
+    padding: 80px 0;
+    text-align: center;
+    font-size: 30px;
 }
 </style>

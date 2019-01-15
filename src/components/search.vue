@@ -91,10 +91,10 @@ export default {
             this.common.goin(id, a, b, c, event, that);
         },
         loadMoreShow() {
+            let that = this;
             let page = parseInt(window.sessionStorage.getItem("page")) + 1;
             window.sessionStorage.setItem("page", page);
             this.loading = true;
-            let that = this;
             // that.$post("game/game/gameMobileSelect",{
             //     name: window.sessionStorage.getItem("name"),
             //     page: window.sessionStorage.getItem("page")
@@ -157,7 +157,7 @@ export default {
         },
         //手释放，如果在1000毫秒内就释放，则取消长按事件，此时可以执行onclick应该执行的事件
         gtouchend(id, a, b, c, event) {
-            event.preventDefault();
+            // event.preventDefault();
             clearTimeout(this.timeout); //清除定时器
 
             if (this.timeout != 0) {

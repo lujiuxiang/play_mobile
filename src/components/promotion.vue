@@ -31,6 +31,7 @@
                                 <th>登录设备信息</th>
                                 <th>注册时间</th>
                                 <th>已提现金额</th>
+                                <th>返利金额</th>
                                 <th>日盈利</th>
                                 <th>总盈利</th>
                             </thead>
@@ -43,6 +44,7 @@
                                     <td v-html="item.logininfo && item.logininfo != -1 ? item.logininfo : '从未登录'"></td>
                                     <td>{{item.ctime}}</td>
                                     <td>{{item.liushui}}</td>
+                                    <td>{{item.fanshui}}</td>
                                     <td>{{item.dayprofit}}</td>
                                     <td>{{item.totalprofit}}</td>
                                 </tr>
@@ -553,6 +555,11 @@ export default {
                         that.pass = ""
                         that.realpass = ""
                         that.qkpass = ""
+                        that.state1 = "error";
+                        that.state2 = "error";
+                        that.state3 = "error";
+                        that.state4 = "error";
+                        that.state5 = "error";
                         // 更新下级管理列表
                         that.searchData()
                     }else if(res == -1){

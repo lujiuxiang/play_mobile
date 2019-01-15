@@ -48,7 +48,6 @@ export default {
                 Indicator.open("加载中...");
                 let win = window.open() // 跳转游戏链接 新窗口
                 let user = window.sessionStorage.getItem("login_user");
-
                 that.$post("game/game/index", {
                     user: user,
                     game: a,
@@ -76,7 +75,7 @@ export default {
                         return
                     }
                     // 最近浏览
-                    that.$post("index/method/recentlyadd", {
+                    that.$post("index/method/RecentlyAdd", {
                             userid: user,
                             gameid: id
                         }).then(res => {

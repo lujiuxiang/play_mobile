@@ -89,20 +89,20 @@ export default new Vuex.Store({
                     .catch(err => {
                         console.log(err);
                     })
-
             })
         },
         // // 会员中心 会员头部信息
         handle_getMemberCenterTitle({ commit }, info) {
             return new Promise(() => {
-                info.that.$post("person/index/memberClass", { user: info.user }).then((res) => {
-                    // 如果data为-1 则表示账号在别处登录 -2则表示登陆超时
-                    if (res == -1 || res == -2) {
-                        info.that.common.isOnline(info.that, res);
-                        return;
-                    }
-                    commit("newMemberCenterTitle", res)
-                })
+                info.that.$post("person/index/memberClass", { user: info.user })
+                    .then((res) => {
+                        // 如果data为-1 则表示账号在别处登录 -2则表示登陆超时
+                        if (res == -1 || res == -2) {
+                            info.that.common.isOnline(info.that, res);
+                            return;
+                        }
+                        commit("newMemberCenterTitle", res)
+                    })
             })
         },
         // 首页加载时游戏列表（判断是不是试玩账号）

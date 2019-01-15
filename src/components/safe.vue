@@ -135,7 +135,7 @@ export default {
                         Toast("更改失败");
                     }
                 }).catch(err=>{
-                    console.log(data);
+                    console.log(err);
                     Toast("更改失败");
                 })
             }
@@ -438,6 +438,8 @@ input:disabled {
 }
 /* 设置默认银行卡 */
 .bankDefault {
+    position: relative;
+    z-index: 999;
     text-indent: 30px;
 }
 .bankDefault i {

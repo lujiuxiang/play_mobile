@@ -20,6 +20,7 @@
     "flexible.js": "^2.0.19",
     "good-listener": "^1.2.2",
     "graceful-fs": "^4.1.11",
+    "js-md5": "^0.7.3",
     "lib-flexible": "^0.3.2",
     "mint-ui": "^2.2.13",
     "mobile-select": "^1.1.2",

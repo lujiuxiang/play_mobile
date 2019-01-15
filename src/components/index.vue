@@ -61,7 +61,6 @@
                 <mt-button class='navBar' 
                             :class="{show: active == index}" 
                             ref="navBar" v-for="(item,index) in gList" 
-                            @click.native.prevent="active = index" 
                             @click="goswiper(index)" 
                             :key="index">
                     <i :class=item.imgurl></i>
@@ -70,44 +69,46 @@
             </div>
             <!-- 游戏轮播 -->
             <swiper class="swiper-container" :options="swiperOption" ref="mySwiper">
-                <swiper-slide class="contentWrap" v-for="(item,index) in gList" v-if="item.url !== 'false'" :key="index">
-                    <!-- 彩票或棋牌的选项卡 -->
-                    <mt-navbar class="page-part" v-model="selected">
-                        <mt-tab-item v-for="(newitem,newindex) in item.sub" :key="newindex" :id="newitem.id">
-                            <img class="gameImg" v-lazy="newitem.ico" alt="">
-                            <span>{{newitem.title}}</span>
-                        </mt-tab-item>
-                    </mt-navbar>
+                <swiper-slide class="contentWrap" v-for="(item,index) in gList"  :key="index">
+                    <div v-if="item.url !== 'false'">
+                        <!-- 彩票或棋牌的选项卡 -->
+                        <mt-navbar class="page-part" v-model="selected">
+                            <mt-tab-item v-for="(newitem,newindex) in item.sub" :key="newindex" :id="newitem.id">
+                                <img class="gameImg" v-lazy="newitem.ico" alt="">
+                                <span>{{newitem.title}}</span>
+                            </mt-tab-item>
+                        </mt-navbar>
 
-                    <mt-cell :title="'内容 ' + selected"></mt-cell>
-                    <!-- 选项卡对应的内容数据 -->
-                    <mt-tab-container v-model="selected">
-                        <mt-tab-container-item v-for="(newitem,newindex) in item.sub" :key="newindex" :id="newitem.id">
-                            <div class="content" v-for="(gameitem,gameindex) in newitem.game" :key="gameindex">
-                                <p>{{gameitem.online}}人在玩</p>
-                                <div :class="gameitem.hot" ref="gamesShoucang" @touchstart="gtouchstart(gameitem.id,$event,gameitem.collect)" @touchmove="gtouchmove(gameitem.id,$event)" @touchend="gtouchend(gameitem.id,gameitem.platform,gameitem.gamecode,gameitem.moneycode,$event,newindex)">
-                                    <img v-lazy="gameitem.src" alt="">
-                                    <span>
-                                        {{gameitem.gamename}}
-                                    </span>
-                                    <i class="iconfont icon-youjiantou"></i>
-                                    <i :class="{'iconfont': true, 'icon-xin':gameitem.collect == 1 , }"></i>
+                        <mt-cell :title="'内容 ' + selected"></mt-cell>
+                        <!-- 选项卡对应的内容数据 -->
+                        <mt-tab-container v-model="selected">
+                            <mt-tab-container-item v-for="(newitem,newindex) in item.sub" :key="newindex" :id="newitem.id">
+                                <div class="content" v-for="(gameitem,gameindex) in newitem.game" :key="gameindex">
+                                    <p>{{gameitem.online}}人在玩</p>
+                                    <div :class="gameitem.hot" ref="gamesShoucang" @touchstart="gtouchstart(gameitem.id,$event,gameitem.collect)" @touchmove="gtouchmove(gameitem.id,$event)" @touchend="gtouchend(gameitem.id,gameitem.platform,gameitem.gamecode,gameitem.moneycode,$event,newindex)">
+                                        <img v-lazy="gameitem.src" alt="">
+                                        <span>
+                                            {{gameitem.gamename}}
+                                        </span>
+                                        <i class="iconfont icon-youjiantou"></i>
+                                        <i :class="{'iconfont': true, 'icon-xin':gameitem.collect == 1 , }"></i>
+                                    </div>
                                 </div>
+                            </mt-tab-container-item>
+                        </mt-tab-container>
+                    </div>
+                    <div v-else>
+                        <!-- 除了彩票和棋牌 其他正常显示 -->
+                        <div class="content" v-for="(newitem,newindex) in item.sub" :key="newindex">
+                            <p>{{newitem.online}}人在玩</p>
+                            <div :class="newitem.hot" ref="gamesShoucang" @touchstart="gtouchstart(newitem.id,$event,newitem.collect)" @touchmove="gtouchmove(newitem.id,$event)" @touchend="gtouchend(newitem.id,newitem.platform,newitem.gamecode,newitem.moneycode,$event,newindex)">
+                                <img v-lazy="newitem.src" alt="">
+                                <span>
+                                    {{newitem.gamename}}
+                                </span>
+                                <i class="iconfont icon-youjiantou"></i>
+                                <i :class="{'iconfont': true, 'icon-xin':newitem.collect == 1 , }"></i>
                             </div>
-                        </mt-tab-container-item>
-                    </mt-tab-container>
-                </swiper-slide>
-                <swiper-slide class="contentWrap" v-else>
-                    <!-- 除了彩票和棋牌 其他正常显示 -->
-                    <div class="content" v-for="(newitem,newindex) in item.sub" :key="newindex">
-                        <p>{{newitem.online}}人在玩</p>
-                        <div :class="newitem.hot" ref="gamesShoucang" @touchstart="gtouchstart(newitem.id,$event,newitem.collect)" @touchmove="gtouchmove(newitem.id,$event)" @touchend="gtouchend(newitem.id,newitem.platform,newitem.gamecode,newitem.moneycode,$event,newindex)">
-                            <img v-lazy="newitem.src" alt="">
-                            <span>
-                                {{newitem.gamename}}
-                            </span>
-                            <i class="iconfont icon-youjiantou"></i>
-                            <i :class="{'iconfont': true, 'icon-xin':newitem.collect == 1 , }"></i>
                         </div>
                     </div>
                 </swiper-slide>
@@ -139,6 +140,7 @@
         <!-- 最新消息弹窗 结束 -->
     </div>
 
+
 </template>
 
 <style scoped src="../css/index.css"></style>
@@ -150,7 +152,7 @@ import axios from "axios";
 import {mapActions} from 'vuex'
 import commonheader from "./../commonViews/commonHeader.vue";
 import commonfooter from "./../commonViews/commonfooter.vue";
-import 'swiper/dist/css/swiper.css'////这里注意具体看使用的版本是否需要引入样式，以及具体位置。
+import 'swiper/dist/css/swiper.css'//这里注意具体看使用的版本是否需要引入样式，以及具体位置。
 
 export default {
     name: "index",
@@ -255,8 +257,6 @@ export default {
                         that.common.isOnline(that, res);
                         return;
                     }
-                    console.log(res);
-                    
                     if (res.status == 1) {
                         collect = 1;
                         Toast("已添加至我的收藏！");
@@ -333,7 +333,9 @@ export default {
                     ulWrap.scrollTop++
                 }
             }
-            window.timer = setInterval(run,80);
+            window.timer = setInterval(function () { 
+                setTimeout(run,0)
+            },80);
         },
         // 中奖名单
         winnersScroll() {
@@ -369,6 +371,7 @@ export default {
         },
         // 点击按钮 轮播切换
         goswiper(index) {
+            this.active = index
             this.$refs.mySwiper.swiper.slideTo(index, 300, false);
         },
         ...mapActions([
@@ -391,11 +394,10 @@ export default {
         }
     },
     created() {
-        window.sessionStorage.setItem("popupShow","0");        
+        window.sessionStorage.setItem("popupShow","0");
     },
     mounted() {
         let that = this;
-        
         //禁止页面滑动游戏时 浏览器的默认前进后退事件
         let xStart, xEnd, yStart, yEnd;
         
@@ -418,21 +420,6 @@ export default {
             },
             { passive: false }
         );
-        // swiper
-        // this.$nextTick(() => {
-        //     this.swiperOption = {
-        //         observer: true, //修改swiper自己或子元素时，自动初始化swiper
-        //         observeParents: true, //修改swiper的父元素时，自动初始化swiper
-        //         on:{
-        //             slideChangeTransitionStart: function() {
-        //                 console.log(this.realIndex - 1);
-                        
-        //                 that.active = this.realIndex - 1;
-        //             }
-        //         }
-        //     };
-            // this.mySwiper = mySwiper;
-        // });
     },
     updated() {
         Indicator.close();
@@ -454,12 +441,18 @@ export default {
             params: {usertype: usertype, user: user}
         })
         // 每隔10秒  重新请求游戏数据  让 在线人数变化
+        clearInterval(window.timer);
+        clearInterval(this.indexGames_timer)
+        // setInterval不会清除定时器队列，每重复执行1次都会导致定时器叠加，最终卡死你的网页。
+        // 但是setTimeout是自带清除定时器的
         this.indexGames_timer = setInterval(function() {
-            that.handle_indexGames({
-                url: 'game/game/gameMobileSelect',
-                that: that,
-                params: {usertype: usertype, user: user}
-            })
+            setTimeout(function () {
+                that.handle_indexGames({
+                    url: 'game/game/gameMobileSelect',
+                    that: that,
+                    params: {usertype: usertype, user: user}
+                })
+            }, 0)
         }, 10000);
         if(this.winner_list)this.win_scroll()
     },
@@ -478,10 +471,9 @@ export default {
             }
         }
     },
-    beforeRouteLeave (to, from, next) {
+    deactivated() {
         clearInterval(window.timer);
         clearInterval(this.indexGames_timer)
-        next()
     }
 };
 </script>
